@@ -1,0 +1,7 @@
+[package]
+name = "kirjasto"
+version = "0.1.0"
+authors = ["Polarit <jjlammi at yahoo>"]
+edition = "2018"
+
+[dependencies]

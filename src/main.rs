@@ -1,5 +1,10 @@
 use std::env;    
 use chrono::{Local};
+use suncalc::solar::trigonos::cosd;
+use suncalc::solar::trigonos::acosd;
+use suncalc::solar::trigonos::sind; 
+use suncalc::solar::trigonos::asind; 
+use suncalc::solar::trigonos::tand;
 
 const ZENITH_SUNRISE: f64 = 90.83;
 
@@ -86,25 +91,5 @@ fn sun_equat_centr(epoc: f64) -> f64 {
 }
 fn declination(obl_cor: f64, sun_app_long: f64) -> f64 {
     asind(sind(obl_cor) * sind(sun_app_long))
-}
-
-fn sind(x: f64) -> f64 {
-    x.to_radians().sin()
-}
-
-fn asind(x: f64) -> f64 {
-    x.asin().to_degrees()
-}
-
-fn cosd(x: f64) -> f64 {
-    x.to_radians().cos()
-}
-
-fn acosd(x: f64) -> f64 {
-    x.acos().to_degrees()
-}
-
-fn tand(x: f64) -> f64 {
-x.to_radians().tan()
 }
 
