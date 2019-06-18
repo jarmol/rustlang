@@ -1,9 +1,15 @@
   pub mod solar {
   use crate::trigonos::sind;
-    pub fn sun_true_longit(epoc: f64) -> f64 {
+  use crate::trigonos::tand;
+  use crate::trigonos::cosd;
+  use crate::trigonos::acosd;
+
+  const ZENITH_SUNRISE: f64 = 90.83;
+
+  pub fn sun_true_longit(epoc: f64) -> f64 {
        let sun_eq_cntr = sun_equat_centr(epoc); // expected 0.874 
        sun_eq_cntr + (280.46646 + epoc * (36000.76983 + epoc * 3.032E-4)) % 360.0
-    }
+  }
 
   pub fn sun_app_long(epoch: f64) -> f64 {
          let sun_true_long = sun_true_longit(epoch);
@@ -19,6 +25,9 @@
     arvo // returned value
   }
 
+   pub fn sunrise_ha(latit: f64, declinat: f64) -> f64 {
+      (acosd(cosd(ZENITH_SUNRISE)/(cosd(latit)*cosd(declinat)) - tand(latit)*tand(declinat)))
+   }
  }
 
   pub mod trigonos {
