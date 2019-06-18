@@ -28,12 +28,10 @@ fn main() {
     jd_output(my_jdn, 10, 22);
 
     let epoch = jd_epoch(my_jdn, 10, 22);
-//    let true_long = sun_true_longit(epoch); // expected 76.413
     let sun_long = sun_app_long(epoch);
     let my_declination = declination(23.4359, sun_long); // except 22.74
     let ha_rise = sunrise_ha(latitude, my_declination);
     println!("Epoch 2000 = {:.6}", epoch);
-//    println!("Sun true longitude     =  {:.3} °", true_long);
     println!("Sun apparent longitude =  {:.3} °", sun_long);
     println!("Declination            =  {:.3} °", my_declination);
     println!("HA Sunrise             = {:.3} °", ha_rise); // expect 166.75 deg
@@ -48,10 +46,6 @@ fn jd_output(jdn: f64, h: i32, mn: i32) {
     let x = utc_time_jd(jdn, h, mn);
     println!("JD = {:.4}", x);
 }
-
-//fn sun_app_long(sun_true_long: f64, epoch: f64) -> f64 {
-//        sun_true_long - 0.00569 - 0.00478 * sind(125.04 - 1934.136 * epoch)
-//    } 
 
 fn declination(obl_cor: f64, sun_app_long: f64) -> f64 {
     asind(sind(obl_cor) * sind(sun_app_long))
