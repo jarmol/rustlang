@@ -1,4 +1,5 @@
 /target
-src/.*.rs.un~
 **/*.rs.bk
+src/.lib.rs.un~
+src/.main.rs.un~
 .DS_Store
