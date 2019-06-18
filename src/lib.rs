@@ -1,13 +1,19 @@
   pub mod solar {
+  use crate::trigonos::sind;
     pub fn sun_true_longit(epoc: f64) -> f64 {
        let sun_eq_cntr = sun_equat_centr(epoc); // expected 0.874 
        sun_eq_cntr + (280.46646 + epoc * (36000.76983 + epoc * 3.032E-4)) % 360.0
     }
 
+  pub fn sun_app_long(epoch: f64) -> f64 {
+         let sun_true_long = sun_true_longit(epoch);
+         sun_true_long - 0.00569 - 0.00478 * sind(125.04 - 1934.136 * epoch)
+    } 
+
   pub fn sun_equat_centr(epoc: f64) -> f64 {
-    let sind = |x: f64|  x.to_radians().sin();
-    let mean_anom: f64 = (357.52911 + epoc * (35999.05029 - 1.537E-4 * epoc)) % 360.0; 
-    let arvo: f64 = sind(mean_anom) * (1.914_602 - epoc * (4.817E-3 + 1.4E-5 * epoc))
+    //  let sind = |x: f64|  x.to_radians().sin();
+      let mean_anom: f64 = (357.52911 + epoc * (35999.05029 - 1.537E-4 * epoc)) % 360.0; 
+      let arvo: f64 = sind(mean_anom) * (1.914_602 - epoc * (4.817E-3 + 1.4E-5 * epoc))
         + sind(2.0 * mean_anom) * (0.019_993 - 1.01E-4 * epoc)
         + sind(3.0 * mean_anom) * 2.89E-4;
     arvo // returned value
