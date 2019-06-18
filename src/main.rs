@@ -28,13 +28,11 @@ fn main() {
     jd_output(my_jdn, 10, 22);
 
     let epoch = jd_epoch(my_jdn, 10, 22);
-    let sun_eq_cntr = sun_equat_centr(epoch); // expected 0.874
-    let true_long = sun_true_longit(epoch, sun_eq_cntr); // expected 76.413
+    let true_long = sun_true_longit(epoch); // expected 76.413
     let sun_long = sun_app_long(true_long, epoch);
     let my_declination = declination(23.4359, sun_long); // except 22.74
     let ha_rise = sunrise_ha(latitude, my_declination);
     println!("Epoch 2000 = {:.6}", epoch);
-    println!("Sun equat. centre      =   {:.3} °", sun_eq_cntr); // expected 0.874
     println!("Sun true longitude     =  {:.3} °", true_long);
     println!("Sun apparent longitude =  {:.3} °", sun_long);
     println!("Declination            =  {:.3} °", my_declination);
@@ -49,14 +47,6 @@ fn jd_output(jdn: f64, h: i32, mn: i32) {
     println!("UTC time: {}h {}min", h, mn);
     let x = utc_time_jd(jdn, h, mn);
     println!("JD = {:.4}", x);
-}
-
-fn sun_equat_centr(epoc: f64) -> f64 {
-    let mean_anom: f64 = (357.52911 + epoc * (35999.05029 - 1.537E-4 * epoc)) % 360.0; 
-    let arvo: f64 = sind(mean_anom) * (1.914_602 - epoc * (4.817E-3 + 1.4E-5 * epoc))
-        + sind(2.0 * mean_anom) * (0.019_993 - 1.01E-4 * epoc)
-        + sind(3.0 * mean_anom) * 2.89E-4;
-    arvo // returned value
 }
 
 fn sun_app_long(sun_true_long: f64, epoch: f64) -> f64 {
