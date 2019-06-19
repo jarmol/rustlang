@@ -4,6 +4,7 @@
   use crate::trigonos::cosd;
   use crate::trigonos::acosd;
   use crate::trigonos::asind;
+  
   const ZENITH_SUNRISE: f64 = 90.83;
 
   pub fn sun_true_longit(epoc: f64) -> f64 {
@@ -29,9 +30,34 @@
       asind(sind(obl_cor) * sind(sun_app_long))
   }
 
+  pub fn time_equation(epoc: f64) -> f64 {
+      let mean_long_sun: f64 = (280.46646 + epoc * (36000.76983 + epoc * 3.032E-4)) % 360.0; 
+      let mean_anom: f64 = (357.52911 + epoc * (35999.05029 - 1.537E-4 * epoc)) % 360.0;
+      let eccent_orbit = 0.0167; 
+      let y_var = 0.043;
+      let pal_arvo: f64 = 4.0*(y_var*sind(2.0*(mean_long_sun))
+      - 2.0*eccent_orbit
+      *sind(mean_anom)
+      + 4.0*eccent_orbit*y_var
+      *sind(mean_anom)
+      *cosd(2.0*mean_long_sun)
+      - 0.5*y_var*y_var
+      *sind(4.0*mean_long_sun)
+      - 1.25*eccent_orbit*eccent_orbit
+      *sind(2.0*mean_anom)).to_degrees();
+
+      pal_arvo
+  }
+
    pub fn sunrise_ha(latit: f64, declinat: f64) -> f64 {
       (acosd(cosd(ZENITH_SUNRISE)/(cosd(latit)*cosd(declinat)) - tand(latit)*tand(declinat)))
    }
+
+   pub fn noon_time(epoc: f64, longit: f64, tz: f64) -> f64 {
+       let eq_of_time = time_equation(epoc);
+      (720.0 - 4.0*longit - eq_of_time + tz*60.0)/1440.0 // noontime[minutes]/24[hours]
+   }
+
  }
 
   pub mod trigonos {
