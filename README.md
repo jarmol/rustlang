@@ -9,7 +9,7 @@ on a given date
 The programme can be run in shell with the line command cargo if Rust is installed.
 
 <h2>Example</h2>
-```$ cargo run<br>
+`$ cargo run`<br>
     Finished dev [unoptimized + debuginfo] target(s) in 0.08s<br>
      Running `target/debug/suncalc<br>
 Program: target/debug/suncalc<br>
@@ -23,4 +23,4 @@ Sun apparent longitude =  76.403 °<br>
 Declination            =  22.742 °<br>
 HA Sunrise             = 166.718 °<br>
 Day length             =  22 h 14 min<br>
-```
+
