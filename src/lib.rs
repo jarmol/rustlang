@@ -3,7 +3,7 @@
   use crate::trigonos::tand;
   use crate::trigonos::cosd;
   use crate::trigonos::acosd;
-
+  use crate::trigonos::asind;
   const ZENITH_SUNRISE: f64 = 90.83;
 
   pub fn sun_true_longit(epoc: f64) -> f64 {
@@ -23,6 +23,10 @@
         + sind(2.0 * mean_anom) * (0.019_993 - 1.01E-4 * epoc)
         + sind(3.0 * mean_anom) * 2.89E-4;
     arvo // returned value
+  }
+
+  pub fn declination(obl_cor: f64, sun_app_long: f64) -> f64 {
+      asind(sind(obl_cor) * sind(sun_app_long))
   }
 
    pub fn sunrise_ha(latit: f64, declinat: f64) -> f64 {
