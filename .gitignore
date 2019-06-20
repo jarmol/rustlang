@@ -2,4 +2,5 @@
 **/*.rs.bk
 src/.lib.rs.un~
 src/.main.rs.un~
+.README.md.un~
 .DS_Store
