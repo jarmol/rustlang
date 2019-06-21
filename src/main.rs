@@ -29,8 +29,8 @@ fn main() {
     let ha_rise = sunrise_ha(latitude, my_declination);
     let daylen_tuple = get_hrmn(ha_rise/180.0);
     let noon_fraction = noon_time(epoch, longitude, time_zone);
-    let rise_fraction = rise_time(noon_fraction, ha_rise);
-    let set_fraction  = set_time(noon_fraction, ha_rise);
+    let rise_fraction = rise_set_time(noon_fraction, ha_rise);
+    let set_fraction  = rise_set_time(noon_fraction, -ha_rise);
     let time_tuple    = get_hrmn(noon_fraction);
     let rise_tuple    = get_hrmn(rise_fraction);
     let set_tuple     = get_hrmn(set_fraction);
@@ -41,12 +41,8 @@ fn main() {
        (day_hours, day_minutes)
     }
 
-    fn rise_time(noon_time: f64, ha_angle: f64) -> f64 {
+    fn rise_set_time(noon_time: f64, ha_angle: f64) -> f64 {
        noon_time - ha_angle/360.0
-    }
-
-    fn set_time(noon_time: f64, ha_angle: f64) -> f64 {
-       noon_time + ha_angle/360.0
     }
 
     println!("Epoch 2000 = {:.6}", epoch);
