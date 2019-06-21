@@ -6,7 +6,6 @@ use suncalc::julian::utc_time_jd;
 use suncalc::solar::sun_app_long;
 use suncalc::solar::sunrise_ha;
 use suncalc::solar::declination;
-use suncalc::solar::time_equation;
 use suncalc::solar::noon_time;
 
 fn main() {
@@ -48,24 +47,20 @@ fn main() {
 
     fn set_time(noon_time: f64, ha_angle: f64) -> f64 {
        noon_time + ha_angle/360.0
+    }
 
     println!("Epoch 2000 = {:.6}", epoch);
     println!("Declination            =  {:.3} °", my_declination);
     println!("HA Sunrise             = {:.3} °", ha_rise); // expect 166.75 deg
-    println!("Time equation          = {:.3} min", time_equation(epoch)); // expect -0.858 minutes
-//  println!("Day length             =  {:.0} h {:.0} min", 2.0*ha_rise/15.0, 8.0*ha_rise % 60.0);
     println!("Day length             = {} h {} min", daylen_tuple.0, daylen_tuple.1);
     println!("Sunrise time           = {} h {} min", rise_tuple.0, rise_tuple.1);
     println!("Noon time              = {} h {} min", time_tuple.0, time_tuple.1);
     println!("Sunset time            = {} h {} min", set_tuple.0, set_tuple.1);
 
-fn jd_output(jdn: f64, h: i32, mn: i32) {
-    println!("UTC time: {}h {}min", h, mn);
-    let x = utc_time_jd(jdn, h, mn);
-    println!("JD = {:.4}", x);
-}
+  fn jd_output(jdn: f64, h: i32, mn: i32) {
+     println!("UTC time: {}h {}min", h, mn);
+     let x = utc_time_jd(jdn, h, mn);
+     println!("JD = {:.4}", x);
+  }
 
-//  fn declination(obl_cor: f64, sun_app_long: f64) -> f64 {
-//    asind(sind(obl_cor) * sind(sun_app_long))
-//  }
 }
