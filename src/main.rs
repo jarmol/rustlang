@@ -31,8 +31,10 @@ fn main() {
     let daylen_tuple = get_hrmn(ha_rise/180.0);
     let noon_fraction = noon_time(epoch, longitude, time_zone);
     let rise_fraction = rise_time(noon_fraction, ha_rise);
-    let time_tuple   = get_hrmn(noon_fraction);
-    let rise_tuple   = get_hrmn(rise_fraction);
+    let set_fraction  = set_time(noon_fraction, ha_rise);
+    let time_tuple    = get_hrmn(noon_fraction);
+    let rise_tuple    = get_hrmn(rise_fraction);
+    let set_tuple     = get_hrmn(set_fraction);
    
     fn get_hrmn(dayfract: f64) -> (u32, u32) {
        let day_hours:   u32 = (24.0*dayfract) as u32;
@@ -44,6 +46,9 @@ fn main() {
        noon_time - ha_angle/360.0
     }
 
+    fn set_time(noon_time: f64, ha_angle: f64) -> f64 {
+       noon_time + ha_angle/360.0
+
     println!("Epoch 2000 = {:.6}", epoch);
     println!("Declination            =  {:.3} °", my_declination);
     println!("HA Sunrise             = {:.3} °", ha_rise); // expect 166.75 deg
@@ -52,6 +57,7 @@ fn main() {
     println!("Day length             = {} h {} min", daylen_tuple.0, daylen_tuple.1);
     println!("Sunrise time           = {} h {} min", rise_tuple.0, rise_tuple.1);
     println!("Noon time              = {} h {} min", time_tuple.0, time_tuple.1);
+    println!("Sunset time            = {} h {} min", set_tuple.0, set_tuple.1);
 
 fn jd_output(jdn: f64, h: i32, mn: i32) {
     println!("UTC time: {}h {}min", h, mn);
