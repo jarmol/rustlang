@@ -12,23 +12,20 @@ line command cargo if Rust is installed.
 ## Example
 ```
 $ cargo run
-  Compiling suncalc v0.1.0 (/Users/jarmo/rustain/suncalc)
-    Finished dev [unoptimized + debuginfo] target(s) in 1.88s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.07s
      Running `target/debug/suncalc`
 Program: target/debug/suncalc
-Time now: Fri, 21 Jun 2019 10:28:04 +0300
+Location: latitude 65.85 °, longitude 24.18 °
+Time now: Fri, 21 Jun 2019 22:36:46 +0300
 Calculation date and time is 2019-06-07 12:22:06.
 JDN = 2458642
 UTC time: 10h 22min
 JD = 2458641.9319
-Epoch 2000 = 0.194303
-Declination            =  22.742 °
-HA Sunrise             = 166.718 °
-Time equation          = 1.181 min
-Day length             = 22 h 13 min
-Sunrise time           = 1 h 15 min
-Noon time              = 12 h 22 min
-Sunset time            = 23 h 28 min
+Declination            = 22.742 °
+Day length             = 22:13:00
+Sunrise time           = 01:15:00 
+Noon time              = 12:22:00
+Sunset time            = 23:28:00
 $
 ```
 
