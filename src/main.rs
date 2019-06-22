@@ -45,10 +45,10 @@ fn main() {
   } // End of main
 
     fn get_hrmn(dayfract: f64) -> NaiveTime {
-       let day_hours:   u32 = (24.0*dayfract) as u32;
-       let day_minutes: u32 = (1440.0*dayfract % 60.0) as u32;
-  //     (day_hours, day_minutes)
-    NaiveTime::from_hms(day_hours, day_minutes, 0)
+       let day_hours:   u32 = (   24.0*dayfract       ) as u32;
+       let day_minutes: u32 = ( 1440.0*dayfract % 60.0) as u32;
+       let day_seconds: u32 = (86400.0*dayfract % 60.0) as u32;
+       NaiveTime::from_hms(day_hours, day_minutes, day_seconds)
     }
 
     fn rise_set_time(noon_time: f64, ha_angle: f64) -> f64 {
