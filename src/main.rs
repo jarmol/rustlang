@@ -15,15 +15,17 @@ fn main() {
     println!("Location: latitude {} °, longitude {} °", latitude, longitude);
     let local_time = Local::now();
     let (year, month, day) = (2019, 6, 7);
-    let date_time: NaiveDateTime = NaiveDate::from_ymd(year, month, 7).and_hms(12, 22, 06);
-    let my_jdn = f64::from(date_jdn(year, month as i32, day));
+    let (hr, mn, ss) = (12, 22, 06);
+    let date_time: NaiveDateTime = NaiveDate::from_ymd(year, month, day).and_hms(hr, mn, ss);
+    let my_jdn = f64::from(date_jdn(year, month as i32, day as i32));
     println!("Time now: {}", local_time.to_rfc2822());
     println!("Calculation date and time is {}.", date_time);
 
     println!("JDN = {}", my_jdn);
-    jd_output(my_jdn, 10, 22);
+    let hr_utc = hr - time_zone as u32;
+    jd_output(my_jdn, hr_utc as i32, mn as i32);
 
-    let epoch = jd_epoch(my_jdn, 10, 22);
+    let epoch = jd_epoch(my_jdn, hr_utc as i32, 22);
     let sun_long = sun_app_long(epoch);
     let my_declination = declination(23.4359, sun_long); // except 22.74
     let ha_rise       =  sunrise_ha(latitude, my_declination);
