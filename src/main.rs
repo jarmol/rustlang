@@ -8,12 +8,12 @@ use suncalc::solar::sunrise_ha;
 use suncalc::solar::declination;
 use suncalc::solar::noon_time;
 use suncalc::solar::true_solar_time;
-
+use suncalc::solar::hour_angle;
 fn main() {
     let args: Vec<String> = env::args().collect();
     println!("Program: {}", args[0]);
     let (latitude, longitude, time_zone) = (65.85, 24.18, 2.0);
-    println!("Location: latitude {} °, longitude {} °", latitude, longitude);
+    println!("Location: latitude {} °, longitude {} °, time zone {} h", latitude, longitude, time_zone);
     let local_time = Local::now();
     let (year, month, day) = (2019, 6, 7);
     let (hr, mn, ss) = (12, 22, 06);
@@ -37,12 +37,13 @@ fn main() {
     let rise_time     =  get_hrmn(rise_fraction);
     let set_fraction  =  rise_set_time(noon_fraction, -ha_rise);
     let set_time      =  get_hrmn(set_fraction);
-    let true_sol_time =  true_solar_time(hr, mn, ss, longitude, epoch);
-
+    let true_sol_time =  true_solar_time(hr, mn, ss, longitude, epoch, time_zone);
+    let hr_angle = hour_angle(true_sol_time);
  // println!("Epoch 2000 = {:.6}", epoch);
     println!("Declination            = {:.3} °", my_declination);
  // println!("HA Sunrise             = {:.3} °", ha_rise); // expect 166.75 deg
     println!("True solar time        = {:.3} min", true_sol_time); // except 720
+    println!("Hour angle             = {:.3} °", hr_angle);  // except 0.000
     println!("Day length             = {:.?}", daylen);
     println!("Sunrise time           = {:.?} ", rise_time);
     println!("Noon time              = {:.?}", noon_time);
