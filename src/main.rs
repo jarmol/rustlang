@@ -9,6 +9,8 @@ use suncalc::solar::declination;
 use suncalc::solar::noon_time;
 use suncalc::solar::true_solar_time;
 use suncalc::solar::hour_angle;
+use suncalc::solar::solar_zenith_angle;
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     println!("Program: {}", args[0]);
@@ -39,11 +41,16 @@ fn main() {
     let set_time      =  get_hrmn(set_fraction);
     let true_sol_time =  true_solar_time(hr, mn, ss, longitude, epoch, time_zone);
     let hr_angle = hour_angle(true_sol_time);
+    let sun_zenith = solar_zenith_angle(latitude, my_declination, hr_angle);
+    let sun_max_altitude: f64 = 90.0 - sun_zenith;
+
  // println!("Epoch 2000 = {:.6}", epoch);
     println!("Declination            = {:.3} °", my_declination);
  // println!("HA Sunrise             = {:.3} °", ha_rise); // expect 166.75 deg
     println!("True solar time        = {:.3} min", true_sol_time); // except 720
     println!("Hour angle             = {:.3} °", hr_angle);  // except 0.000
+    println!("Solar zenith           = {:.3} °", sun_zenith); // expected 43.11 deg
+    println!("Sun altitude           = {:.3} °", sun_max_altitude); // expected 46.892 deg
     println!("Day length             = {:.?}", daylen);
     println!("Sunrise time           = {:.?} ", rise_time);
     println!("Noon time              = {:.?}", noon_time);

@@ -71,7 +71,12 @@
        else {true_sol_time/4.0 - 180.0};
        ha
     }
- }
+
+   pub fn  solar_zenith_angle(latit: f64, sun_declin: f64, hr_angle: f64) -> f64 {
+       acosd(sind(latit)*sind(sun_declin)+cosd(latit)*cosd(sun_declin)*cosd(hr_angle))    // 43.108 degrees expected
+    } 
+
+}
 
   pub mod trigonos {
 
