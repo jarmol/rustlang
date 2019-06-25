@@ -76,7 +76,18 @@
        acosd(sind(latit)*sind(sun_declin)+cosd(latit)*cosd(sun_declin)*cosd(hr_angle))    // 43.108 degrees expected
     } 
 
-}
+   pub fn atmospheric_refraction(h: f64) -> f64 {
+       let x = h.to_radians().tan();
+       let mut refract: f64 = 0.0;
+       if h > 85.0 {refract = 0.0;}
+       else if h > 5.0 {refract = 58.1/x - 0.07/x.powf(3.0) + 0.000086/x.powf(5.0);}
+       else if h > -0.575 {refract = 1735.0 + h*(-518.2 + h*(103.4 + h*(-12.79 + h*0.711)));}
+       else if h < -0.575 {refract = -20.772 / x; };
+
+       refract/3600.0   // returned value
+   }
+
+ }
 
   pub mod trigonos {
 
