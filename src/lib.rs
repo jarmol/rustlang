@@ -87,6 +87,11 @@
        refract/3600.0   // returned value
    }
 
+   pub fn refr_correct_altitude(zenith: f64, height: f64) -> f64 {
+       let refract = atmospheric_refraction(height);
+       90.0 - zenith + refract
+   }
+
  }
 
   pub mod trigonos {
