@@ -1,6 +1,7 @@
-/target
-**/*.rs.bk
+.DS_Store
+.README.md.un~
 src/.lib.rs.un~
 src/.main.rs.un~
-.README.md.un~
-.DS_Store
+target/
+witharguments/target/
+
