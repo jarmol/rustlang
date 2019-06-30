@@ -46,12 +46,12 @@ fn main() {
     println!("Calculation date and time is {}.", date_time);
 
     println!("JDN = {}", my_jdn);
-    let hr_utc = hr - time_zone as u32;
-    jd_output(my_jdn, hr_utc as i32, mn as i32);
+    let hr_utc: u32 = hr - time_zone as u32;
+    jd_output(my_jdn, hr_utc as u32, mn as u32);
 
-    let epoch = jd_epoch(my_jdn, hr_utc as i32, 22);
+    let epoch = jd_epoch(my_jdn, hr_utc as u32, mn);
     let sun_long = sun_app_long(epoch);
-    let my_declination = declination(23.4359, sun_long); // except 22.74
+    let my_declination = declination(23.4359, sun_long);
     let ha_rise       =  sunrise_ha(latitude, my_declination);
     let daylen        =  get_hrmn(ha_rise/180.0);
     let noon_fraction =  noon_time(epoch, longitude, time_zone);
@@ -67,15 +67,15 @@ fn main() {
     let atmosfer_refract = atmospheric_refraction(sun_max_altitude); 
     let correct_height   = refr_correct_altitude(sun_zenith, sun_max_altitude);
 
- // println!("Epoch 2000                     =  {:.6}", epoch);
-    println!("Declination                    =  {:.3} °", my_declination);
- // println!("HA Sunrise                     = {:.3} °", ha_rise); // expect 166.75 deg
-    println!("True solar time                = {:.3} min", true_sol_time); // except 720
-    println!("Hour angle                     =  {:.3} °", hr_angle);  // except 0.000
-    println!("Solar zenith                   = {:.3} °", sun_zenith); // expected 43.11 deg
-    println!("Sun altitude                   = {:.3} °", sun_max_altitude); // expected 46.892 deg
-    println!("Atmospheric refraction         =  {:.3} °", atmosfer_refract); // expected 0.015 deg
-    println!("Refraction corrected elevation = {:.3} °", correct_height); // expected 46.91 deg
+ // println!("Epoch 2000                     =   {:.6}", epoch);
+    println!("Declination                    =   {:.3} °", my_declination);
+ // println!("HA Sunrise                     =   {:.3} °", ha_rise);
+    println!("True solar time                =   {:.3} min", true_sol_time);
+    println!("Hour angle                     = {:.3} °", hr_angle);
+    println!("Solar zenith                   =   {:.3} °", sun_zenith);
+    println!("Sun altitude                   =    {:.3} °", sun_max_altitude);
+    println!("Atmospheric refraction         =    {:.3} °", atmosfer_refract);
+    println!("Refraction corrected elevation =    {:.3} °", correct_height);
     println!("Day length             = {:.?}", daylen);
     println!("Sunrise time           = {:.?} ", rise_time);
     println!("Noon time              = {:.?}", noon_time);
@@ -93,7 +93,7 @@ fn main() {
        noon_time - ha_angle/360.0
     }
 
-  fn jd_output(jdn: f64, h: i32, mn: i32) {
+  fn jd_output(jdn: f64, h: u32, mn: u32) {
      println!("UTC time: {}h {}min", h, mn);
      let x = utc_time_jd(jdn, h, mn);
      println!("JD = {:.4}", x);
