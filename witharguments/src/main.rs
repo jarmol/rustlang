@@ -10,6 +10,7 @@ use suncalcargs::solar::noon_time;
 use suncalcargs::solar::true_solar_time;
 use suncalcargs::solar::hour_angle;
 use suncalcargs::solar::solar_zenith_angle;
+use suncalcargs::solar::calc_f_azim;
 use suncalcargs::solar::atmospheric_refraction;
 use suncalcargs::solar::refr_correct_altitude;
 
@@ -64,6 +65,7 @@ fn main() {
     let hr_angle = hour_angle(true_sol_time);
     let sun_zenith = solar_zenith_angle(latitude, my_declination, hr_angle);
     let sun_max_altitude: f64 = 90.0 - sun_zenith;
+    let solar_azimuth: f64 = calc_f_azim(hr_angle, my_declination, latitude);
     let atmosfer_refract = atmospheric_refraction(sun_max_altitude); 
     let correct_height   = refr_correct_altitude(sun_zenith, sun_max_altitude);
 
@@ -73,6 +75,7 @@ fn main() {
     println!("True solar time                =   {:.3} min", true_sol_time);
     println!("Hour angle                     = {:.3} °", hr_angle);
     println!("Solar zenith                   =   {:.3} °", sun_zenith);
+    println!("Solar azimuth                  =   {:.3} °", solar_azimuth);
     println!("Sun altitude                   =    {:.3} °", sun_max_altitude);
     println!("Atmospheric refraction         =    {:.3} °", atmosfer_refract);
     println!("Refraction corrected elevation =    {:.3} °", correct_height);

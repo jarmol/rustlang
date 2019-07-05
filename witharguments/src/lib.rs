@@ -72,6 +72,13 @@
        ha
     }
 
+// Azimuth angle
+   pub fn calc_f_azim(ha: f64, declin: f64, latit: f64) -> f64 {
+       let y: f64 = sind(ha);
+       let x: f64 = cosd(ha)*sind(latit) - tand(declin)*cosd(latit); 
+       180.0 + y.atan2(x).to_degrees()
+   }
+
    pub fn  solar_zenith_angle(latit: f64, sun_declin: f64, hr_angle: f64) -> f64 {
        acosd(sind(latit)*sind(sun_declin)+cosd(latit)*cosd(sun_declin)*cosd(hr_angle))    // 43.108 degrees expected
     } 
