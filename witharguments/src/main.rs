@@ -14,19 +14,25 @@ use suncalcargs::solar::calc_f_azim;
 use suncalcargs::solar::atmospheric_refraction;
 use suncalcargs::solar::refr_correct_altitude;
 
+struct Times {
+    hour: u32,
+    min:  u32,
+    sec:  u32
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     println!("Program:    {}", args[0]);
     println!("Read {} arguments", args.len() - 1);
-    let mut v1:u32 = 12;
-    let mut v2:u32 = 22;
-
+    let mut calc_time = Times {hour: 12, min: 22, sec: 6}; 
 // Handle arguments hr, mn, ss
     if args.len() > 2 {
        println!("Argument 1: {} hr", args[1]);
        println!("Argument 2: {} mn", args[2]);
-       v1 = args[1].parse::<u32>().unwrap();
-       v2 = args[2].parse::<u32>().unwrap();
+       println!("Argument 3: {} ss", args[3]);
+       calc_time.hour = args[1].parse::<u32>().unwrap();
+       calc_time.min  = args[2].parse::<u32>().unwrap();
+       calc_time.sec  = args[3].parse::<u32>().unwrap();
    }
 
     let (latitude, longitude, time_zone) = (65.85, 24.18, 2.0);
@@ -34,25 +40,25 @@ fn main() {
     let local_time = Local::now();
     let utc_time = DateTime::<Utc>::from_utc(local_time.naive_utc(), Utc);
     
-    let mut v3:u32 = 7; // day
-    if v1 < time_zone as u32 {
-       v1 += 24 - time_zone as u32;
-       v3 -= 1;
-    }
+    let mut my_day:u32 = 7; // day
+    if calc_time.hour < time_zone as u32 {my_day -= 1 };
 
-    let (year, month, day) = (2019, 6, v3);
-    let (hr, mn, ss) = (v1, v2, 00);
-    let date_time: NaiveDateTime = NaiveDate::from_ymd(year, month, day).and_hms(hr, mn, ss);
+    let hr_utc: u32 = if calc_time.hour < time_zone as u32 {
+      calc_time.hour + 24 - time_zone as u32 }
+      else {calc_time.hour - time_zone as u32};
+
+    let (year, month, day) = (2019, 6, my_day);
+    let date_time: NaiveDateTime = NaiveDate::from_ymd(year, month, day)
+    .and_hms(calc_time.hour, calc_time.min, calc_time.sec);
     let my_jdn = f64::from(date_jdn(year, month as i32, day as i32));
     println!("Local time now: {}", local_time.to_rfc2822());
     println!("Universal time now: {}", utc_time);
-    println!("Calculation date and time is {}.", date_time);
+    println!("Calculation time is {}", date_time);
 
     println!("JDN = {}", my_jdn);
-    let hr_utc: u32 = hr - time_zone as u32;
-    jd_output(my_jdn, hr_utc as u32, mn as u32);
+    jd_output(my_jdn, hr_utc as u32, calc_time.min as u32);
 
-    let epoch = jd_epoch(my_jdn, hr_utc as u32, mn);
+    let epoch = jd_epoch(my_jdn, hr_utc as u32, calc_time.min);
     let sun_long = sun_app_long(epoch);
     let my_declination = declination(23.4359, sun_long);
     let ha_rise       =  sunrise_ha(latitude, my_declination);
@@ -63,7 +69,7 @@ fn main() {
     let rise_time     =  get_hrmn(rise_fraction);
     let set_fraction  =  rise_set_time(noon_fraction, -ha_rise);
     let set_time      =  get_hrmn(set_fraction);
-    let true_sol_time =  true_solar_time(hr, mn, ss, longitude, epoch, time_zone);
+    let true_sol_time =  true_solar_time(calc_time.hour, calc_time.min, calc_time.sec, longitude, epoch, time_zone);
     let hr_angle = hour_angle(true_sol_time);
     let sun_zenith = solar_zenith_angle(latitude, my_declination, hr_angle);
     let sun_max_altitude: f64 = 90.0 - sun_zenith;

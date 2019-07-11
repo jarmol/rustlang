@@ -59,10 +59,8 @@
    }
 
    pub fn true_solar_time(hh: u32, mm: u32, ss: u32, longit: f64, epoc: f64, tz: f64) -> f64 {
-    // =MOD(F159*1440+W159+4*$B$4-60*$B$5;1440)
        let f = hh as f64 / 24.0 + mm as f64 / 1440.0 + ss as f64 / 86400.0;
        let time_equat: f64 = time_equation(epoc);   // except 1.183;
-   //  let tz = 2.0;
        (f*1440.0 + time_equat + 4.0*longit - 60.0*tz) % 1440.0
    }
 
