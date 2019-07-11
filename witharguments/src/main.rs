@@ -1,5 +1,5 @@
 use std::env;    
-use chrono::{NaiveDate, NaiveDateTime, NaiveTime, Local};
+use chrono::{DateTime, Utc, NaiveDate, NaiveDateTime, NaiveTime, Local};
 use suncalcargs::julian::date_jdn;
 use suncalcargs::julian::jd_epoch;
 use suncalcargs::julian::utc_time_jd;
@@ -32,10 +32,11 @@ fn main() {
     let (latitude, longitude, time_zone) = (65.85, 24.18, 2.0);
     println!("Location: latitude {} °, longitude {} °, time zone {} h", latitude, longitude, time_zone);
     let local_time = Local::now();
-
+    let utc_time = DateTime::<Utc>::from_utc(local_time.naive_utc(), Utc);
+    
     let mut v3:u32 = 7; // day
     if v1 < time_zone as u32 {
-       v1 += 24;
+       v1 += 24 - time_zone as u32;
        v3 -= 1;
     }
 
@@ -43,7 +44,8 @@ fn main() {
     let (hr, mn, ss) = (v1, v2, 00);
     let date_time: NaiveDateTime = NaiveDate::from_ymd(year, month, day).and_hms(hr, mn, ss);
     let my_jdn = f64::from(date_jdn(year, month as i32, day as i32));
-    println!("Time now: {}", local_time.to_rfc2822());
+    println!("Local time now: {}", local_time.to_rfc2822());
+    println!("Universal time now: {}", utc_time);
     println!("Calculation date and time is {}.", date_time);
 
     println!("JDN = {}", my_jdn);
