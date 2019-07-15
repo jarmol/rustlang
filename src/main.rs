@@ -30,9 +30,9 @@ fn main() {
 
     println!("JDN = {}", my_jdn);
     let hr_utc = hr - time_zone as u32;
-    jd_output(my_jdn, hr_utc as i32, mn as i32);
+    jd_output(my_jdn, hr_utc, mn);
 
-    let epoch = jd_epoch(my_jdn, hr_utc as i32, 22);
+    let epoch = jd_epoch(my_jdn, hr_utc, mn);
     let sun_long = sun_app_long(epoch);
     let my_declination = declination(23.4359, sun_long); // except 22.74
     let ha_rise       =  sunrise_ha(latitude, my_declination);
@@ -76,8 +76,11 @@ fn main() {
        noon_time - ha_angle/360.0
     }
 
-  fn jd_output(jdn: f64, h: i32, mn: i32) {
-     println!("UTC time: {}h {}min", h, mn);
+  fn two_zeroes(num: u32) -> String {
+   format!("{number:>0width$}", number=num, width=2)
+}
+  fn jd_output(jdn: f64, h: u32, mn: u32) {
+     println!("UTC time: {}:{}", two_zeroes(h), two_zeroes(mn));
      let x = utc_time_jd(jdn, h, mn);
      println!("JD = {:.4}", x);
   }

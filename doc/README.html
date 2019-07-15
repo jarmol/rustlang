@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <title>Sunrise-Sunset Calculator with Rust Programming Language  </title>
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+    <h1 class="title">Sunrise-Sunset Calculator with Rust Programming Language  </h1>
+    <nav id="TOC"><ul>
+<li><a href="#description">0.1 Description</a><ul></ul></li>
+<li><a href="#example">0.2 Example</a><ul></ul></li></ul></nav><h2 id="description" class="section-header"><a href="#description">0.1 Description</a></h2>
+<p>This version calculates:</p>
+<ul>
+<li>the noon time,</li>
+<li>the daylength, </li>
+<li>the Sun rise and Sun set times </li>
+<li>the maximum Sun elevation at the noon time as corrected with the refraction 
+for the given latitude, longitude and time zone  on a given date and local time.
+DLST option is not used here </li>
+</ul>
+<p>If Rust is installed, the program can be run in the shell window with the line command: cargo run</p>
+<h2 id="example" class="section-header"><a href="#example">0.2 Example</a></h2>
+<pre><code>$ cargo run
+Program: target/debug/suncalc
+Location: latitude 65.85 °, longitude 24.18 °, time zone 2 h
+Time now: Mon, 15 Jul 2019 18:59:25 +0300
+UTC time now is 2019-07-15 15:59:25.827113 UTC
+Calculation date and time is 2019-06-07 12:22:06.
+JDN = 2458642
+UTC time: 10:22
+JD = 2458641.9319
+Declination                    =  22.742 °
+True solar time                = 720.001 min
+Hour angle                     =  0.000 °
+Solar zenith                   = 43.108 °
+Sun altitude                   = 46.892 °
+Atmospheric refraction         =  0.015 °
+Refraction corrected elevation = 46.907 °
+Day length             = 22:13:44
+Sunrise time           = 01:15:13 
+Noon time              = 12:22:05
+Sunset time            = 23:28:58
+$</code></pre>
+    
+</body>
+</html>
