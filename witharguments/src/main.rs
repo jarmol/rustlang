@@ -20,19 +20,39 @@ struct Times {
     sec:  u32
 }
 
+struct Dates {
+    year:  u32,
+    month: u32,
+    day:   u32
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     println!("Program:    {}", args[0]);
     println!("Read {} arguments", args.len() - 1);
     let mut calc_time = Times {hour: 12, min: 22, sec: 6}; 
+    let mut calc_date = Dates {year: 2019, month: 6, day: 7}; 
+
 // Handle arguments hr, mn, ss
     if args.len() > 2 {
        println!("Argument 1: {} hr", args[1]);
        println!("Argument 2: {} mn", args[2]);
        println!("Argument 3: {} ss", args[3]);
+
        calc_time.hour = args[1].parse::<u32>().unwrap();
        calc_time.min  = args[2].parse::<u32>().unwrap();
        calc_time.sec  = args[3].parse::<u32>().unwrap();
+   }
+
+// Handle arguments year, month, day
+    if args.len() > 5 {
+       println!("Argument 4: {} year",  args[4]);
+       println!("Argument 5: {} month", args[5]);
+       println!("Argument 6: {} day",   args[6]);
+
+       calc_date.year   = args[4].parse::<u32>().unwrap();
+       calc_date.month  = args[5].parse::<u32>().unwrap();
+       calc_date.day    = args[6].parse::<u32>().unwrap();
    }
 
     let (latitude, longitude, time_zone) = (65.85, 24.18, 2.0);
@@ -47,10 +67,10 @@ fn main() {
       calc_time.hour + 24 - time_zone as u32 }
       else {calc_time.hour - time_zone as u32};
 
-    let (year, month, day) = (2019, 6, my_day);
-    let date_time: NaiveDateTime = NaiveDate::from_ymd(year, month, day)
+    let (year, month, day) = (calc_date.year, calc_date.month, my_day);
+    let date_time: NaiveDateTime = NaiveDate::from_ymd(year as i32, month as u32, day as u32)
     .and_hms(calc_time.hour, calc_time.min, calc_time.sec);
-    let my_jdn = f64::from(date_jdn(year, month as i32, day as i32));
+    let my_jdn = f64::from(date_jdn(year as i32, month as i32, day as i32));
     println!("Local time now: {}", local_time.to_rfc2822());
     println!("Universal time now: {}", utc_time);
     println!("Calculation time is {}", date_time);

@@ -2,4 +2,5 @@ target/
 src/.main.rs.un~
 ..gitignore.un~
 src/.lib.rs.un~
-
+.*.md.un~
+.DS_Store
