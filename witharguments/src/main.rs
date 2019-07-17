@@ -1,4 +1,5 @@
-use std::env;    
+use std::env; 
+use std::convert::TryInto;   
 use chrono::{DateTime, Utc, NaiveDate, NaiveDateTime, NaiveTime, Local};
 use suncalcargs::julian::date_jdn;
 use suncalcargs::julian::jd_epoch;
@@ -59,22 +60,33 @@ fn main() {
     println!("Location: latitude {} °, longitude {} °, time zone {} h", latitude, longitude, time_zone);
     let local_time = Local::now();
     let utc_time = DateTime::<Utc>::from_utc(local_time.naive_utc(), Utc);
-    
-    let mut my_day:u32 = 7; // day
-    if calc_time.hour < time_zone as u32 {my_day -= 1 };
+    let daynr: [usize; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
+    let mut day_utc:   u32 = calc_date.day;
+    let mut month_utc: u32 = calc_date.month;
+    let mon_i: usize = calc_date.month as usize - 2;
+    if calc_time.hour < time_zone as u32 {
+       if calc_date.day > 1 {day_utc = calc_date.day - 1}
+         else {day_utc =  daynr[mon_i].try_into().unwrap();
+         month_utc = calc_date.month -1}
+   };
 
     let hr_utc: u32 = if calc_time.hour < time_zone as u32 {
       calc_time.hour + 24 - time_zone as u32 }
       else {calc_time.hour - time_zone as u32};
 
-    let (year, month, day) = (calc_date.year, calc_date.month, my_day);
+print!("Testi UTC {}.{}.", day_utc, month_utc);
+println!(" time {}:{}", hr_utc, calc_time.min);
+       
+    let (year, month, day) = (calc_date.year, calc_date.month, calc_date.day);
     let date_time: NaiveDateTime = NaiveDate::from_ymd(year as i32, month as u32, day as u32)
     .and_hms(calc_time.hour, calc_time.min, calc_time.sec);
-    let my_jdn = f64::from(date_jdn(year as i32, month as i32, day as i32));
+    let utc_date_time: NaiveDateTime = NaiveDate::from_ymd(year as i32, month_utc, day_utc as u32)
+    .and_hms(hr_utc,         calc_time.min, calc_time.sec);
+    let my_jdn = f64::from(date_jdn(year as i32, month_utc as i32, day_utc as i32));
     println!("Local time now: {}", local_time.to_rfc2822());
     println!("Universal time now: {}", utc_time);
-    println!("Calculation time is {}", date_time);
-
+    println!("Calculation local time {}", date_time);
+    println!("Calculation   UTC time {}", utc_date_time);  
     println!("JDN = {}", my_jdn);
     jd_output(my_jdn, hr_utc as u32, calc_time.min as u32);
 
