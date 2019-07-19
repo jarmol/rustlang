@@ -2,11 +2,11 @@
 
 ## Description
 
- This is a new version on the other branch using variable time arguments (hours, minutes, seconds)
- of the local time which can be entered on the terminal. The time zone is here fixed to 2 hours.
- As a consequence, a local time below 02:00 cannot be used as conversion to UTC times fails
- because it cannot be negative value.  
-
+ This is a new version using variable arguments of the local time (hours, minutes, seconds) and of the date (year, month, day)
+ which can be entered after the line command. The time zone is here fixed to 2 hours.
+ The location variables (latitude, longitude, timezone) are still fixed values. 
+ They are arguments to be added in a later version. 
+ 
  This version contains the calculation of the noon time,
  daylength, Sun rise and Sun set times, the refraction 
  corrected Sun elevation and the solar azimuth angle for the given latitude and
@@ -21,7 +21,9 @@
 
 ## Example
 ```
-$ cargo run 23 20 0
+jarmo$ cargo run 12 22 6 2019 6 7
+    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
+     Running `target/debug/suncalcargs 12 22 6 2019 6 7`
 Program:    target/debug/suncalcargs
 Read 6 arguments
 Argument 1: 12 hr
@@ -31,9 +33,10 @@ Argument 4: 2019 year
 Argument 5: 6 month
 Argument 6: 7 day
 Location: latitude 65.85 °, longitude 24.18 °, time zone 2 h
-Local time now: Tue, 16 Jul 2019 22:46:51 +0300
-Universal time now: 2019-07-16 19:46:51.876489 UTC
-Calculation time is 2019-06-07 12:22:06
+Local time now: Wed, 17 Jul 2019 23:18:39 +0300
+Universal time now: 2019-07-17 20:18:39.991838 UTC
+Calculation local time 2019-06-07 12:22:06
+Calculation   UTC time 2019-06-07 10:22:06
 JDN = 2458642
 UTC time: 10h 22min
 JD = 2458641.9319
@@ -49,15 +52,15 @@ Day length             = 22:13:44
 Sunrise time           = 01:15:13 
 Noon time              = 12:22:05
 Sunset time            = 23:28:58
-$
+jarmo$
 ```
 ## Case the first day of month near to midnight
 The local time and UTC may have different date near to midnight.
 On the first day of each month especially, also the months are different for both in the midnight.
 That makes the conversion of the local time and date to UTC as required for the Julian date number more
-complicated. This case is handled now in this version.
+complicated. This case is solved now in this version.
 ```
-$
+jarmo$
 suncalcargs 0 12 0 2019 12 1`
 Program:    target/debug/suncalcargs
 Read 6 arguments
@@ -68,7 +71,6 @@ Argument 4: 2019 year
 Argument 5: 12 month
 Argument 6: 1 day
 Location: latitude 65.85 °, longitude 24.18 °, time zone 2 h
-Testi UTC 30.11. time 22:12
 Local time now: Wed, 17 Jul 2019 20:01:51 +0300
 Universal time now: 2019-07-17 17:01:51.010426 UTC
 Calculation local time 2019-12-01 00:12:00
@@ -89,5 +91,4 @@ Sunrise time           = 10:04:40
 Noon time              = 12:11:59
 Sunset time            = 14:19:19
 ```
-$
-  
+jarmo$ 

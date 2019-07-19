@@ -63,26 +63,31 @@ fn main() {
     let daynr: [usize; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
     let mut day_utc:   u32 = calc_date.day;
     let mut month_utc: u32 = calc_date.month;
-    let mon_i: usize = calc_date.month as usize - 2;
+    let mut year_utc: u32  = calc_date.year; 
+    let mon_i: usize = if calc_date.month as usize > 1
+            {calc_date.month as usize - 2usize} else {1};
     if calc_time.hour < time_zone as u32 {
        if calc_date.day > 1 {day_utc = calc_date.day - 1}
          else {day_utc =  daynr[mon_i].try_into().unwrap();
          month_utc = calc_date.month -1}
-   };
+
+       if (calc_date.day == 1) && (calc_date.month == 1)
+          {year_utc -= 1; month_utc = 12; day_utc = 31} 
+   };   
 
     let hr_utc: u32 = if calc_time.hour < time_zone as u32 {
       calc_time.hour + 24 - time_zone as u32 }
       else {calc_time.hour - time_zone as u32};
 
-print!("Testi UTC {}.{}.", day_utc, month_utc);
-println!(" time {}:{}", hr_utc, calc_time.min);
-       
+ print!("Testi UTC {}.{}. {}", day_utc, month_utc, year_utc);
+ println!(" time {}:{}", hr_utc, calc_time.min);
+
     let (year, month, day) = (calc_date.year, calc_date.month, calc_date.day);
     let date_time: NaiveDateTime = NaiveDate::from_ymd(year as i32, month as u32, day as u32)
     .and_hms(calc_time.hour, calc_time.min, calc_time.sec);
-    let utc_date_time: NaiveDateTime = NaiveDate::from_ymd(year as i32, month_utc, day_utc as u32)
+    let utc_date_time: NaiveDateTime = NaiveDate::from_ymd(year_utc as i32, month_utc, day_utc as u32)
     .and_hms(hr_utc,         calc_time.min, calc_time.sec);
-    let my_jdn = f64::from(date_jdn(year as i32, month_utc as i32, day_utc as i32));
+    let my_jdn = f64::from(date_jdn(year_utc as i32, month_utc as i32, day_utc as i32));
     println!("Local time now: {}", local_time.to_rfc2822());
     println!("Universal time now: {}", utc_time);
     println!("Calculation local time {}", date_time);
@@ -126,9 +131,11 @@ println!(" time {}:{}", hr_utc, calc_time.min);
   } // End of main
 
     fn get_hrmn(dayfract: f64) -> NaiveTime {
-       let day_hours:   u32 = (   24.0*dayfract       ) as u32;
+// Test    fn get_hrmn(dayfract: f64) -> String {
+       let day_hours:   u32 = (   24.0*dayfract % 24.0) as u32;
        let day_minutes: u32 = ( 1440.0*dayfract % 60.0) as u32;
        let day_seconds: u32 = (86400.0*dayfract % 60.0) as u32;
+// format!("Test {}:{}:{}", day_hours, day_minutes, day_seconds)
        NaiveTime::from_hms(day_hours, day_minutes, day_seconds)
     }
 
