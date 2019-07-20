@@ -36,9 +36,11 @@ fn main() {
 
 // Handle arguments hr, mn, ss
     if args.len() > 2 {
-       println!("Argument 1: {} hr", args[1]);
-       println!("Argument 2: {} mn", args[2]);
-       println!("Argument 3: {} ss", args[3]);
+       let names = ["hours", "min", "sec"];
+       println!("Arguments: {}, {}, {}", names[0], names[1], names[2]);
+
+    for i in 1..4 {
+         println!("Argument {}: {} {}", i, args[i], names[i - 1]);}
 
        calc_time.hour = args[1].parse::<u32>().unwrap();
        calc_time.min  = args[2].parse::<u32>().unwrap();
@@ -47,9 +49,11 @@ fn main() {
 
 // Handle arguments year, month, day
     if args.len() > 5 {
-       println!("Argument 4: {} year",  args[4]);
-       println!("Argument 5: {} month", args[5]);
-       println!("Argument 6: {} day",   args[6]);
+       let names = ["year", "month", "day"];
+       println!("\nArguments: {}, {}, {}", names[0], names[1], names[2]);
+
+    for i in 4..7 {
+         println!("Argument {}: {} {}", i, args[i], names[i - 4]);}
 
        calc_date.year   = args[4].parse::<u32>().unwrap();
        calc_date.month  = args[5].parse::<u32>().unwrap();
@@ -79,8 +83,8 @@ fn main() {
       calc_time.hour + 24 - time_zone as u32 }
       else {calc_time.hour - time_zone as u32};
 
- print!("Testi UTC {}.{}. {}", day_utc, month_utc, year_utc);
- println!(" time {}:{}", hr_utc, calc_time.min);
+// print!("Testi UTC {}.{}. {}", day_utc, month_utc, year_utc);
+// println!(" time {}:{}", hr_utc, calc_time.min);
 
     let (year, month, day) = (calc_date.year, calc_date.month, calc_date.day);
     let date_time: NaiveDateTime = NaiveDate::from_ymd(year as i32, month as u32, day as u32)
@@ -115,23 +119,23 @@ fn main() {
     let correct_height   = refr_correct_altitude(sun_zenith, sun_max_altitude);
 
  // println!("Epoch 2000                     =   {:.6}", epoch);
-    println!("Declination                    =   {:.3} °", my_declination);
- // println!("HA Sunrise                     =   {:.3} °", ha_rise);
-    println!("True solar time                =   {:.3} min", true_sol_time);
-    println!("Hour angle                     = {:.3} °", hr_angle);
-    println!("Solar zenith                   =   {:.3} °", sun_zenith);
-    println!("Solar azimuth                  =   {:.3} °", solar_azimuth);
-    println!("Sun altitude                   =    {:.3} °", sun_max_altitude);
-    println!("Atmospheric refraction         =    {:.3} °", atmosfer_refract);
-    println!("Refraction corrected elevation =    {:.3} °", correct_height);
-    println!("Day length             = {:.?}", daylen);
-    println!("Sunrise time           = {:.?} ", rise_time);
-    println!("Noon time              = {:.?}", noon_time);
-    println!("Sunset time            = {:.?}", set_time);
+    println!("Declination                    =   {:7.3} °", my_declination);
+ // println!("HA Sunrise                     =   {:7.3} °", ha_rise);
+    println!("True solar time                =   {:7.3} min", true_sol_time);
+    println!("Hour angle                     =   {:7.3} °", hr_angle);
+    println!("Solar zenith                   =   {:7.3} °", sun_zenith);
+    println!("Solar azimuth                  =   {:7.3} °", solar_azimuth);
+    println!("Sun altitude                   =   {:7.3} °", sun_max_altitude);
+    println!("Atmospheric refraction         =   {:7.3} °", atmosfer_refract);
+    println!("Refraction corrected elevation =   {:7.3} °", correct_height);
+    let filler = "          ";
+    println!("Day length        {}   =    {:.?}", filler, daylen);
+    println!("Sunrise time      {}   =    {:.?}", filler, rise_time);
+    println!("Noon time         {}   =    {:.?}", filler, noon_time);
+    println!("Sunset time       {}   =    {:.?}", filler, set_time);
   } // End of main
 
     fn get_hrmn(dayfract: f64) -> NaiveTime {
-// Test    fn get_hrmn(dayfract: f64) -> String {
        let day_hours:   u32 = (   24.0*dayfract % 24.0) as u32;
        let day_minutes: u32 = ( 1440.0*dayfract % 60.0) as u32;
        let day_seconds: u32 = (86400.0*dayfract % 60.0) as u32;
