@@ -27,12 +27,19 @@ struct Dates {
     day:   u32
 }
 
+struct Location {
+   latitude:  f64,
+   longitude: f64,
+   timezone:  f64
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     println!("Program:    {}", args[0]);
     println!("Read {} arguments", args.len() - 1);
     let mut calc_time = Times {hour: 12, min: 22, sec: 6}; 
     let mut calc_date = Dates {year: 2019, month: 6, day: 7}; 
+    let mut my_location = Location {latitude: 65.85, longitude: 24.18, timezone: 2.0};
 
 // Handle arguments hr, mn, ss
     if args.len() > 2 {
@@ -48,19 +55,38 @@ fn main() {
    }
 
 // Handle arguments year, month, day
-    if args.len() > 5 {
+    if args.len() > 4 {
        let names = ["year", "month", "day"];
        println!("\nArguments: {}, {}, {}", names[0], names[1], names[2]);
 
     for i in 4..7 {
-         println!("Argument {}: {} {}", i, args[i], names[i - 4]);}
+        if args.len() > i { println!("Argument {}: {} {}", i, args[i], names[i - 4])}
+        else {panic!("Missing argument {}", names[i - 4]);};}
 
        calc_date.year   = args[4].parse::<u32>().unwrap();
        calc_date.month  = args[5].parse::<u32>().unwrap();
        calc_date.day    = args[6].parse::<u32>().unwrap();
    }
 
-    let (latitude, longitude, time_zone) = (65.85, 24.18, 2.0);
+// Handle arguments latitude, longitude and timezone
+    if args.len() > 7 {
+       let names = ["latitude", "longitude", "timezone"];
+       println!("\nArguments: {}, {}, {}", names[0], names[1], names[2]);
+
+     for i in 7..10 {
+       if args.len() > i {println!("Argument {}: {} {}", i, args[i], names[i - 7]);}  
+     }
+
+       my_location.latitude = args[7].parse::<f64>().unwrap();
+
+       if args.len() > 8 { my_location.longitude = args[8].parse::<f64>().unwrap();}
+       else {panic!("Longitude missing!");}
+
+       if args.len() > 9 { my_location.timezone = args[9].parse::<f64>().unwrap();}
+       else {panic!("Timezone missing!");}
+     }
+
+    let (latitude, longitude, time_zone) = (my_location.latitude, my_location.longitude, my_location.timezone);
     println!("Location: latitude {} °, longitude {} °, time zone {} h", latitude, longitude, time_zone);
     let local_time = Local::now();
     let utc_time = DateTime::<Utc>::from_utc(local_time.naive_utc(), Utc);
