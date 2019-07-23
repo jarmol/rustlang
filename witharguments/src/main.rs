@@ -104,13 +104,14 @@ fn main() {
        if (calc_date.day == 1) && (calc_date.month == 1)
           {year_utc -= 1; month_utc = 12; day_utc = 31} 
    };   
-
-    let hr_utc: u32 = if calc_time.hour < time_zone as u32 {
-      calc_time.hour + 24 - time_zone as u32 }
-      else {calc_time.hour - time_zone as u32};
-
-// print!("Testi UTC {}.{}. {}", day_utc, month_utc, year_utc);
-// println!(" time {}:{}", hr_utc, calc_time.min);
+// panicked at 'attempt to subtract with overflow', src/main.rs:109:7
+// timezone < 0 panicks allways, changed to timezone i32
+    let hr_utc_raw: f64 = if (calc_time.hour as f64) < time_zone {
+      calc_time.hour as f64 + 24_f64 - time_zone }
+      else {calc_time.hour as f64 - time_zone};
+   let hr_utc: u32 = hr_utc_raw as u32; 
+ print!("Testi UTC {}.{}. {}", day_utc, month_utc, year_utc);
+ println!(" time {}:{}", hr_utc, calc_time.min);
 
     let (year, month, day) = (calc_date.year, calc_date.month, calc_date.day);
     let date_time: NaiveDateTime = NaiveDate::from_ymd(year as i32, month as u32, day as u32)
