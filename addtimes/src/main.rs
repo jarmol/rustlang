@@ -1,45 +1,47 @@
-extern crate chrono;
-use chrono::{NaiveDate, NaiveTime, Local, DateTime, FixedOffset, Utc};
-//use chrono::Utc;
+//extern crate chrono;
+use chrono::{NaiveDate, NaiveTime, NaiveDateTime, Datelike, DateTime, Timelike, FixedOffset, TimeZone, Utc};
+
+// CONVERSION OF THE LOCAL TIME TO UTC TIME
+// Look at this: 
+// https://github.com/chronotope/chrono
 
 fn main() {
-     let mut day_fract: f64 = 0.25;
-     println!("fract {:.9} => {:.?}", day_fract, get_hrmn(day_fract));
-     day_fract = 0.250_347_223;
-     println!("fract {:.9} => {:.?}", day_fract, get_hrmn(day_fract));
-     day_fract = 0.250521;
-     println!("fract {:.9} => {:.?}", day_fract, get_hrmn(day_fract));
-     day_fract = 0.375;
-     println!("fract {:.9} => {:.?}", day_fract, get_hrmn(day_fract));
-     day_fract = 0.5;
-     println!("fract {:.9} => {:.?}", day_fract, get_hrmn(day_fract));
-     println!("Local date and time {} {} -> UTC date and time {:?}", NaiveDate::from_ymd(2019, 6, 7),
-     NaiveTime::from_hms(1, 50, 0), utc_time_from_local(7, 1, 50, 2.0));
-     println!("Local date and time {} {} -> UTC date and time {:?}", NaiveDate::from_ymd(2019, 6, 7),
-     NaiveTime::from_hms(2, 05, 0), utc_time_from_local(7, 2, 05, 2.0));
+// The date you parsed
+   let date = NaiveDate::from_ymd(2019, 6, 7); 
+// The known time 
+   let time = NaiveTime::from_hms(12, 22, 6);
+   convert_local_to_utc(date, time, 2);
+   let time = NaiveTime::from_hms(1, 15, 30);
+   convert_local_to_utc(date, time, 2);
+   let date = NaiveDate::from_ymd(2019, 6, 1);
+   convert_local_to_utc(date, time, 2);
+   let date = NaiveDate::from_ymd(2019, 6, 7);
+   let time = NaiveTime::from_hms(12, 30, 00);
+   convert_local_to_utc(date, time, -6);
+   let time = NaiveTime::from_hms(18, 30, 00);
+   convert_local_to_utc(date, time, -6);
+   let date = NaiveDate::from_ymd(2019, 1, 1);
+   let time = NaiveTime::from_hms(1, 59, 59);
+   convert_local_to_utc(date, time, 2);
+}
 
-     let local_time = Local::now(); // timezone  = 3 h = DLST
-     let utc_time = DateTime::<Utc>::from_utc(local_time.naive_utc(), Utc);
-     let helsinki_timezone_normal = FixedOffset::east(2 * 3600);  // Manually forced wintertime tz 2 h
-     println!("Local time now is {}", local_time);
-     println!("UTC time now is {}", utc_time);
-     println!(
-        "Time in Helsinki now is {}",
-        utc_time.with_timezone(&helsinki_timezone_normal));
-  }
+fn convert_local_to_utc(adate: NaiveDate, atime: NaiveTime, tz: i32) {
+// Naive date time, with no time zone information
+// The known tz hours time offset in seconds
+   let tz_offset = FixedOffset::east(tz * 3600);
+   let datetime = NaiveDateTime::new(adate, atime);
+   let dt_with_tz: DateTime<FixedOffset> = tz_offset.from_local_datetime(&datetime).unwrap();
+// If you need to convert it to a DateTime<Utc>, you can do this:
+   let dt_with_tz_utc: DateTime<Utc> = Utc.from_utc_datetime(&dt_with_tz.naive_utc());
+   println!("UTC + {} {} to {}", tz, datetime, dt_with_tz_utc);
+   println!("UTC date: {:.?}", get_date_elements(dt_with_tz_utc));
+   println!("UTC time: {:.?}", get_time_elements(dt_with_tz_utc)); 
+}
 
- // My new function, UTC time from local time near to midnight
-fn utc_time_from_local(day: u32, hr: u32, mn: u32, tzone: f64) -> (NaiveDate, NaiveTime) {
-        let utc_tuplet = if hr < tzone as u32 {(NaiveDate::from_ymd(2019, 6, day - 1), NaiveTime::from_hms(hr + 24 - tzone as u32, mn, 0))}
-        else {(NaiveDate::from_ymd(2019, 6, day), NaiveTime::from_hms(hr - tzone as u32, mn, 00))};
-        
-     utc_tuplet   
-    }
+fn get_date_elements(dt: DateTime<Utc>) -> (i32, u32, u32) {
+   (dt.year(), dt.month(), dt.day())
+}
 
- fn get_hrmn(dayfract: f64) -> NaiveTime {
-       let day_hours:   u32 = (24.0*dayfract) as u32;
-       let day_minutes: u32 = (1440.0*dayfract % 60.0) as u32;
-       let day_seconds: u32 = (86400.0*dayfract % 60.0) as u32;
-    
-       NaiveTime::from_hms(day_hours, day_minutes, day_seconds)
-    }
+fn get_time_elements(dt: DateTime<Utc>) -> (u32, u32, u32) {
+   (dt.hour(), dt.minute(), dt.second())
+}

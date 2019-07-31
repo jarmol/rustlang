@@ -1,5 +1,5 @@
 [package]
-name = "addtimes"
+name = "local2ut"
 version = "0.1.0"
 authors = ["Polarit <jjlammi@yahoo.com>"]
 edition = "2018"

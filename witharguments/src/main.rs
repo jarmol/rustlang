@@ -1,6 +1,6 @@
 use std::env; 
-use std::convert::TryInto;   
-use chrono::{DateTime, Utc, NaiveDate, NaiveDateTime, NaiveTime, Local};
+use chrono::{DateTime, Utc, NaiveDate, Datelike, NaiveDateTime, NaiveTime, Timelike, FixedOffset};
+use chrono::offset::TimeZone;
 use suncalcargs::julian::date_jdn;
 use suncalcargs::julian::jd_epoch;
 use suncalcargs::julian::utc_time_jd;
@@ -22,7 +22,7 @@ struct Times {
 }
 
 struct Dates {
-    year:  u32,
+    year:  i32,
     month: u32,
     day:   u32
 }
@@ -63,7 +63,7 @@ fn main() {
         if args.len() > i { println!("Argument {}: {} {}", i, args[i], names[i - 4])}
         else {panic!("Missing argument {}", names[i - 4]);};}
 
-       calc_date.year   = args[4].parse::<u32>().unwrap();
+       calc_date.year   = args[4].parse::<i32>().unwrap();
        calc_date.month  = args[5].parse::<u32>().unwrap();
        calc_date.day    = args[6].parse::<u32>().unwrap();
    }
@@ -87,40 +87,29 @@ fn main() {
      }
 
     let (latitude, longitude, time_zone) = (my_location.latitude, my_location.longitude, my_location.timezone);
-    println!("Location: latitude {} °, longitude {} °, time zone {} h", latitude, longitude, time_zone);
-    let local_time = Local::now();
-    let utc_time = DateTime::<Utc>::from_utc(local_time.naive_utc(), Utc);
-    let daynr: [usize; 12] = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
-    let mut day_utc:   u32 = calc_date.day;
-    let mut month_utc: u32 = calc_date.month;
-    let mut year_utc: u32  = calc_date.year; 
-    let mon_i: usize = if calc_date.month as usize > 1
-            {calc_date.month as usize - 2usize} else {1};
-    if calc_time.hour < time_zone as u32 {
-       if calc_date.day > 1 {day_utc = calc_date.day - 1}
-         else {day_utc =  daynr[mon_i].try_into().unwrap();
-         month_utc = calc_date.month -1}
+//    println!("Location: latitude {} °, longitude {} °, time zone {} h", latitude, longitude, time_zone);
+//    let local_time = Local::now();
+    let date = NaiveDate::from_ymd(calc_date.year, calc_date.month, calc_date.day);
+    let time = NaiveTime::from_hms(calc_time.hour, calc_time.min, calc_time.sec);
+    let get_utc_dt = convert_local_to_utc(date, time, time_zone);
+    let day_utc   = get_utc_dt.2;
+    let month_utc = get_utc_dt.1;
+    let year_utc  = get_utc_dt.0;
 
-       if (calc_date.day == 1) && (calc_date.month == 1)
-          {year_utc -= 1; month_utc = 12; day_utc = 31} 
-   };   
-// panicked at 'attempt to subtract with overflow', src/main.rs:109:7
-// timezone < 0 panicks allways, changed to timezone i32
-    let hr_utc_raw: f64 = if (calc_time.hour as f64) < time_zone {
-      calc_time.hour as f64 + 24_f64 - time_zone }
-      else {calc_time.hour as f64 - time_zone};
-   let hr_utc: u32 = hr_utc_raw as u32; 
- print!("Testi UTC {}.{}. {}", day_utc, month_utc, year_utc);
- println!(" time {}:{}", hr_utc, calc_time.min);
+    let hr_utc    = get_utc_dt.3;
+//    let mn_utc    = get_utc_dt.4;
+//    println!("Testing day.month.year  UTC {}.{}. {} tz {} h", day_utc, month_utc, year_utc, time_zone);
+//    println!(" time UTC {}:{}", hr_utc, calc_time.min);
 
     let (year, month, day) = (calc_date.year, calc_date.month, calc_date.day);
     let date_time: NaiveDateTime = NaiveDate::from_ymd(year as i32, month as u32, day as u32)
     .and_hms(calc_time.hour, calc_time.min, calc_time.sec);
     let utc_date_time: NaiveDateTime = NaiveDate::from_ymd(year_utc as i32, month_utc, day_utc as u32)
     .and_hms(hr_utc,         calc_time.min, calc_time.sec);
-    let my_jdn = f64::from(date_jdn(year_utc as i32, month_utc as i32, day_utc as i32));
-    println!("Local time now: {}", local_time.to_rfc2822());
-    println!("Universal time now: {}", utc_time);
+ 
+   let my_jdn = f64::from(date_jdn(year_utc as i32, month_utc as i32, day_utc as i32));
+ //   println!("Local time now: {}", local_time.to_rfc2822());
+ //   println!("Universal time now: {}", utc_time);
     println!("Calculation local time {}", date_time);
     println!("Calculation   UTC time {}", utc_date_time);  
     println!("JDN = {}", my_jdn);
@@ -180,3 +169,27 @@ fn main() {
      println!("JD = {:.4}", x);
   }
 
+fn convert_local_to_utc(adate: NaiveDate, atime: NaiveTime, tz: f64) -> (i32, u32, u32, u32, u32, u32) {
+// Naive date time, with no time zone information
+// The known tz hours time offset in seconds
+   let tz_offset = FixedOffset::east(tz as i32 * 3600);
+   let datetime = NaiveDateTime::new(adate, atime);
+   let dt_with_tz: DateTime<FixedOffset> = tz_offset.from_local_datetime(&datetime).unwrap();
+// If you need to convert it to a DateTime<Utc>, you can do this:
+   let dt_with_tz_utc: DateTime<Utc> = Utc.from_utc_datetime(&dt_with_tz.naive_utc());
+   println!("UTC + {} {} to {}", tz, datetime, dt_with_tz_utc);
+   let atuplet = get_date_elements(dt_with_tz_utc);
+   let btuplet = get_time_elements(dt_with_tz_utc);
+   let ctuplet = (atuplet.0, atuplet.1, atuplet.2, btuplet.0, btuplet.1, btuplet.2);
+   println!("UTC date: {:.?}", atuplet);
+   println!("UTC time: {:.?}", btuplet);
+   ctuplet
+}
+
+fn get_date_elements(dt: DateTime<Utc>) -> (i32, u32, u32) {
+   (dt.year(), dt.month(), dt.day())
+}
+
+fn get_time_elements(dt: DateTime<Utc>) -> (u32, u32, u32) {
+   (dt.hour(), dt.minute(), dt.second())
+}
